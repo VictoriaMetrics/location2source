@@ -32,7 +32,6 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Format: vmselect-20250801-135921-tags-v1.122.1-enterprise-cluster-0-ge771e03960
 	isDirty := strings.Contains(appVersion, "-dirty-")
 	gitRef := extractGitRef(appVersion)
 	if gitRef == "" {
@@ -46,35 +45,22 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Format: VictoriaMetrics/lib/vmselectapi/server.go:200
 	filePath, lineNum := extractLocation(location)
 	if filePath == "" {
 		http.Error(w, "Could not extract file path from location", http.StatusBadRequest)
 		return
 	}
 
-	// Construct GitHub URL
 	githubURL := fmt.Sprintf("https://github.com/VictoriaMetrics/%s/blob/%s/%s", repoName, gitRef, filePath)
 	if lineNum != "" {
 		githubURL += fmt.Sprintf("#L%s", lineNum)
 	}
 
-	// For dirty branches, show confirmation page instead of auto-redirect
 	if isDirty {
-		log.Printf("Showing confirmation page for dirty build: %s", githubURL)
-		showConfirmationPage(w, appVersion, githubURL)
-		return
-	}
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
 
-	log.Printf("Redirecting to: %s", githubURL)
-	http.Redirect(w, r, githubURL, http.StatusFound)
-}
-
-func showConfirmationPage(w http.ResponseWriter, appVersion, githubURL string) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-
-	html := fmt.Sprintf(`<!DOCTYPE html>
+		html := fmt.Sprintf(`<!DOCTYPE html>
 <html>
 <head><title>Dirty Build Warning</title></head>
 <body>
@@ -83,7 +69,12 @@ func showConfirmationPage(w http.ResponseWriter, appVersion, githubURL string) {
 </body>
 </html>`, appVersion, githubURL)
 
-	fmt.Fprint(w, html)
+		fmt.Fprint(w, html)
+		return
+	}
+
+	log.Printf("Redirecting to: %s", githubURL)
+	http.Redirect(w, r, githubURL, http.StatusFound)
 }
 
 func extractRepoName(location, appVersion string) string {
@@ -136,6 +127,7 @@ func extractGitRef(appVersion string) string {
 }
 
 func extractLocation(location string) (filePath, lineNum string) {
+	// Format: VictoriaMetrics/lib/vmselectapi/server.go:200
 	location = strings.TrimPrefix(location, "VictoriaMetrics/")
 
 	parts := strings.Split(location, ":")
