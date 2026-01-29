@@ -1,0 +1,6 @@
+services:
+  loglocation2source:
+    build: .
+    x-ports:
+      - 'loglocation2source.makasim.com:8080/https'
+    x-machines: 'hetzner-node-0'
