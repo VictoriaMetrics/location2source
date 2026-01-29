@@ -1,6 +1,18 @@
 # loglocation2source
 A service transofrms VictoriaMetrics log metric labels into a Github Source Code link. 
 
+Could be used as data link in Grafana dashboard to quickly navigate to the source code location from log metric.
+
+```
+topk_max(
+  50,
+  sum(rate(vm_log_messages_total{job=~"$job",instance=~"$instance",level!="info"}[$__rate_interval])) by (job,instance,app_version,location)
+)
+```
+
+```
+https://loglocation2source.makasim.com/?app_version=${__field.labels.app_version}&location=${__field.labels.location}
+```
 
 Try it out:
 
