@@ -129,6 +129,8 @@ func extractGitRef(appVersion string) string {
 func extractLocation(location string) (filePath, lineNum string) {
 	// Format: VictoriaMetrics/lib/vmselectapi/server.go:200
 	location = strings.TrimPrefix(location, "VictoriaMetrics/")
+	location = strings.TrimPrefix(location, "VictoriaLogs/")
+	location = strings.TrimPrefix(location, "VictoriaTraces/")
 
 	parts := strings.Split(location, ":")
 	if len(parts) == 0 {
