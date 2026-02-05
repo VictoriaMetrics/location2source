@@ -1,22 +1,10 @@
 # loglocation2source
-A service transofrms VictoriaMetrics log metric labels into a Github Source Code link. 
 
-Could be used as data link in Grafana dashboard to quickly navigate to the source code location from log metric.
+A service transforms VictoriaMetrics log metric labels app_version and location into a GitHub Source Code link. 
 
-```
-topk_max(
-  50,
-  sum(rate(vm_log_messages_total{job=~"$job",instance=~"$instance",level!="info"}[$__rate_interval])) by (job,instance,app_version,location)
-)
-```
-
-```
-https://loglocation2source.makasim.com/?app_version=${__field.labels.app_version}&location=${__field.labels.location}
-```
+It is used as [data link](https://grafana.com/docs/grafana/latest/visualizations/panels-visualizations/configure-data-links/) in VictoriaMetrics Grafana dashboard to quickly navigate from logs panel to the source code location on GitHub.
 
 Try it out:
 
-- Clean: https://loglocation2source.makasim.com/?app_version=vmagent-20251104-105304-tags-v1.129.1-0-g5e98e0cff5&location=VictoriaMetrics/lib/promscrape/scrapework.go:394
-- Dirty: https://loglocation2source.makasim.com/?app_version=vmagent-20251104-105304-tags-v1.129.1-0-g5e98e0cff5-dirty-123abc&location=VictoriaMetrics/lib/promscrape/scrapework.go:394
-
-
+- Tag: [app_version=vmagent-20251104-105304-tags-v1.129.1-0-g5e98e0cff5&location=VictoriaMetrics/lib/promscrape/scrapework.go:394](https://loglocation2source.makasim.com/?app_version=vmagent-20251104-105304-tags-v1.129.1-0-g5e98e0cff5&location=VictoriaMetrics/lib/promscrape/scrapework.go:394)
+- Dirty: [app_version=vmagent-20251104-105304-tags-v1.129.1-0-g5e98e0cff5-dirty-123abc&location=VictoriaMetrics/lib/promscrape/scrapework.go:394](https://loglocation2source.makasim.com/?app_version=vmagent-20251104-105304-tags-v1.129.1-0-g5e98e0cff5-dirty-123abc&location=VictoriaMetrics/lib/promscrape/scrapework.go:394)
