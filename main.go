@@ -100,7 +100,7 @@ func extractRepoName(location, appVersion string) string {
 func extractGitRef(appVersion string) string {
 	// Check for tags (e.g., tags-v1.129.1-0-g5e98e0cff5)
 	if strings.Contains(appVersion, "-tags-") {
-		re := regexp.MustCompile(`-tags-(.*?)(?:-\d+-g[0-9a-f]+)?`)
+		re := regexp.MustCompile(`-tags-(.*?)-\d+-g[0-9a-f]+?`)
 		matches := re.FindStringSubmatch(appVersion)
 		if len(matches) > 1 {
 			return matches[1]
@@ -109,7 +109,7 @@ func extractGitRef(appVersion string) string {
 
 	// Check for branch at head with 0 commits ahead (e.g., heads-master-0-g1db7597e45)
 	if strings.Contains(appVersion, "-heads-") {
-		re := regexp.MustCompile(`-heads-(.*?)-0-g[0-9a-f]+`)
+		re := regexp.MustCompile(`-heads-(.*?)-\d+-g[0-9a-f]+?`)
 		matches := re.FindStringSubmatch(appVersion)
 		if len(matches) > 1 {
 			return matches[1]
