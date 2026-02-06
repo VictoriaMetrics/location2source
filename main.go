@@ -64,6 +64,17 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 <html>
 <head><title>Dirty Build Warning</title></head>
 <body>
+<style>
+@media (prefers-color-scheme: dark) {
+  body {
+	background: #1e1e1e;
+	color: #e0e0e0;
+  }
+  a {
+	color: #58a6ff;
+  }
+}
+</style>
 <p>Warning: %s is a dirty build. The source code may not exactly match the running code.</p>
 <p><a href="%s">Continue to GitHub</a></p>
 </body>
@@ -73,7 +84,7 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if strings.Contains(githubURL, `-enterprise/`) {
+	if strings.Contains(githubURL, `enterprise`) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 
@@ -81,9 +92,19 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 
 		html := fmt.Sprintf(`<!DOCTYPE html>
 <html>
-<head>
-<title>Enterprise Repository Access</title></head>
+<head><title>Enterprise Repository Access</title></head>
 <body>
+<style>
+@media (prefers-color-scheme: dark) {
+  body {
+	background: #1e1e1e;
+	color: #e0e0e0;
+  }
+  a {
+	color: #58a6ff;
+  }
+}
+</style>
 <h2>Warning: Enterprise Repository Access</h2>
 <p>This code location is from an enterprise repository which have access restrictions.</p>
 <h3>Links:</h3>
