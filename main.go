@@ -73,6 +73,31 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if strings.Contains(githubURL, `-enterprise/`) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+
+		openSourceURL := strings.Replace(githubURL, "-enterprise", "", -1)
+
+		html := fmt.Sprintf(`<!DOCTYPE html>
+<html>
+<head>
+<title>Enterprise Repository Access</title></head>
+<body>
+<h2>Warning: Enterprise Repository Access</h2>
+<p>This code location is from an enterprise repository which have access restrictions.</p>
+<h3>Links:</h3>
+<ul>
+<li><a href="%s">Enterprise Repository</a> (may require special access)</li>
+<li><a href="%s">Open Source Repository</a> (publicly accessible, but content might differ from enterprise version)</li>
+</ul>
+</body>
+</html>`, githubURL, openSourceURL)
+
+		fmt.Fprint(w, html)
+		return
+	}
+
 	log.Printf("Redirecting to: %s", githubURL)
 	http.Redirect(w, r, githubURL, http.StatusFound)
 }
