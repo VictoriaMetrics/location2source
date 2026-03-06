@@ -133,7 +133,15 @@ func extractRepoName(location, appVersion string) string {
 	case "VictoriaMetrics", "VictoriaLogs", "VictoriaTraces":
 		// valid base repo names
 	default:
-		return ""
+		if strings.HasPrefix(appVersion, "victoria-traces") || strings.HasPrefix(appVersion, "vt") {
+			repo = "VictoriaTraces"
+		} else if strings.HasPrefix(appVersion, "victoria-logs") || strings.HasPrefix(appVersion, "vl") {
+			repo = "VictoriaLogs"
+		} else if strings.HasPrefix(appVersion, "victoria-metrics") || strings.HasPrefix(appVersion, "vm") {
+			repo = "VictoriaMetrics"
+		} else {
+			return ""
+		}
 	}
 
 	if strings.Contains(appVersion, "enterprise") {
@@ -173,10 +181,22 @@ func extractGitRef(appVersion string) string {
 }
 
 func extractLocation(location string) (filePath, lineNum string) {
-	// Format: VictoriaMetrics/lib/vmselectapi/server.go:200
-	location = strings.TrimPrefix(location, "VictoriaMetrics/")
-	location = strings.TrimPrefix(location, "VictoriaLogs/")
-	location = strings.TrimPrefix(location, "VictoriaTraces/")
+	// Format: VictoriaMetrics@v1.135.0/lib/httpserver/httpserver.go:367
+	if strings.Contains(location, "@") {
+		parts := strings.SplitN(location, "@", 2)
+		libRepo := parts[0]
+
+		parts = strings.SplitN(parts[1], "/", 2)
+
+		libPath := parts[1]
+
+		location = fmt.Sprintf(`vendor/github.com/VictoriaMetrics/%s/%s`, libRepo, libPath)
+	} else {
+		// Format: VictoriaMetrics/lib/vmselectapi/server.go:200
+		location = strings.TrimPrefix(location, "VictoriaMetrics/")
+		location = strings.TrimPrefix(location, "VictoriaLogs/")
+		location = strings.TrimPrefix(location, "VictoriaTraces/")
+	}
 
 	parts := strings.Split(location, ":")
 	if len(parts) == 0 {
