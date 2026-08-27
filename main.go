@@ -130,7 +130,7 @@ func extractRepoName(location, appVersion string) string {
 	}
 
 	switch repo {
-	case "VictoriaMetrics", "VictoriaLogs", "VictoriaTraces":
+	case "VictoriaMetrics", "VictoriaLogs", "VictoriaTraces", "vmestimator":
 		// valid base repo names
 	default:
 		if strings.HasPrefix(appVersion, "victoria-traces") || strings.HasPrefix(appVersion, "vt") {
