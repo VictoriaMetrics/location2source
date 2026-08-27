@@ -196,6 +196,7 @@ func extractLocation(location string) (filePath, lineNum string) {
 		location = strings.TrimPrefix(location, "VictoriaMetrics/")
 		location = strings.TrimPrefix(location, "VictoriaLogs/")
 		location = strings.TrimPrefix(location, "VictoriaTraces/")
+		location = strings.TrimPrefix(location, "vmestimator/")
 	}
 
 	parts := strings.Split(location, ":")
